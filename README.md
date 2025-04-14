@@ -35,9 +35,33 @@ Bu proje, Kubernetes üzerinde çalışan mikroservis mimarili bir web uygulamas
 ### Secret
 - Veritabanı kullanıcı adı ve şifresi gibi gizli bilgiler burada saklanır.
 
-## Uygulamanın Çalıştırılması
+## Uygulamanın Kurulumu
 
-1. **EKS kümesini oluşturun** (eksctl veya Terraform ile).
-2. **YAML dosyalarını uygulayın**:
-   ```bash
-   kubectl apply -f k8s/
+### 1. EKS Kümesini Oluşturun
+```bash
+eksctl create cluster --name my-cluster --region us-east-1
+```
+### 2.Uygulama Manifestlerini Uygulayın
+```bash
+kubectl apply -f k8s/
+```
+### 3.Ingress ve ALB Kurulumu
+```bash
+kubectl apply -f ingress.yaml
+```
+### 4.Secret Oluşturun
+```bash
+kubectl create secret generic db-secret \
+  --from-literal=username=myuser \
+  --from-literal=password=mypassword
+```
+### 5.Uygulamaya Erişim
+```bash
+echo "http://$(kubectl get ingress tomcat-ingress -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
+```
+### Gereksinimler
+- AWS Hesabı
+- eksctl
+- kubectl 
+- Docker
+- Helm
